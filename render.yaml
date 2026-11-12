@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: analisis-carteles-sicop
+    env: python
+    plan: free
+    region: oregon
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn wsgi:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: IA_API_KEY
+        sync: false
