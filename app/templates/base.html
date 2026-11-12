@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Analisis de Carteles SICOP{% endblock %}</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header {
+            background: #1e293b;
+            border-bottom: 2px solid #334155;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        header h1 { color: #38bdf8; font-size: 1.5rem; }
+        header p { color: #94a3b8; font-size: 0.9rem; margin-top: 5px; }
+        nav {
+            background: #1e293b;
+            padding: 15px 0;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+        nav a {
+            color: #38bdf8;
+            text-decoration: none;
+            margin-right: 25px;
+            font-weight: 500;
+        }
+        nav a:hover { text-decoration: underline; }
+        .btn {
+            background: #38bdf8;
+            color: #0f172a;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover { background: #7dd3fc; }
+        .btn-secondary {
+            background: #475569;
+            color: #ffffff;
+        }
+        .btn-secondary:hover { background: #64748b; }
+        .card {
+            background: #1e293b;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid #334155;
+        }
+        .card h2 { color: #38bdf8; margin-bottom: 15px; font-size: 1.25rem; }
+        .card p { color: #cbd5e1; margin-bottom: 15px; }
+        .grid { display: grid; gap: 20px; }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+        .footer {
+            margin-top: 40px;
+            padding: 20px 0;
+            border-top: 1px solid #334155;
+            color: #64748b;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+        .alert { padding: 15px; border-radius: 6px; margin-bottom: 20px; }
+        .alert-info { background: #1e3a5f; border: 1px solid #3b82f6; color: #93c5fd; }
+        .alert-warning { background: #451a03; border: 1px solid #f59e0b; color: #fcd34d; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; background: #1e293b; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #334155; }
+        th { background: #0f172a; color: #38bdf8; font-weight: 600; text-transform: uppercase; font-size: 0.85rem; }
+        tr:hover { background: #334155; }
+        .contador { font-size: 2.5rem; font-weight: 700; color: #38bdf8; }
+        .etiqueta-contador { color: #94a3b8; font-size: 0.9rem; text-transform: uppercase; }
+        .filtro { margin-bottom: 20px; }
+        .filtro input {
+            padding: 10px 15px;
+            border: 1px solid #334155;
+            border-radius: 6px;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 0.95rem;
+            width: 100%;
+            max-width: 400px;
+        }
+        .detalle { display: none; background: #0f172a; border-left: 4px solid #38bdf8; padding: 15px; margin-top: 10px; }
+        .detalle.mostrar { display: block; }
+        .viabilidad-alta { color: #22c55e; font-weight: 600; }
+        .viabilidad-media { color: #eab308; font-weight: 600; }
+        .viabilidad-baja { color: #ef4444; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📋 Analisis de Carteles SICOP</h1>
+            <p>TI - Preventa Comercial | Costa Rica</p>
+        </div>
+    </header>
+
+    <nav>
+        <div class="container">
+            <a href="/">Inicio</a>
+            <a href="/resultados">Resultados</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            App de Analisis de Carteles SICOP - Preventa Comercial TI &copy; 2026
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

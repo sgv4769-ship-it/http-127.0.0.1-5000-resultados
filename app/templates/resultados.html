@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}Resultados - Analisis de Carteles SICOP{% endblock %}
+
+{% block styles %}
+<style>
+    body {
+        background: #1a1a2e !important;
+        color: #e2e8f0;
+    }
+    header {
+        background: #16213e !important;
+        border-bottom: 2px solid #0f3460 !important;
+    }
+    nav {
+        background: #16213e !important;
+    }
+    .card {
+        background: #16213e !important;
+        border: 1px solid #0f3460 !important;
+    }
+    .card h2 { color: #00d2ff !important; }
+    .contador { color: #00d2ff !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>Tablero de Resultados</h2>
+
+<div class="grid grid-3" style="margin-bottom: 30px;">
+    <div style="background:#1e293b;padding:25px;border-radius:8px;border:1px solid #334155;text-align:center;">
+        <div class="contador" id="contador-total">0</div>
+        <div class="etiqueta-contador">Carteles Analizados</div>
+    </div>
+    <div style="background:#1e293b;padding:25px;border-radius:8px;border:1px solid #334155;text-align:center;">
+        <div class="contador" style="color:#22c55e;" id="contador-viables">0</div>
+        <div class="etiqueta-contador">Viables (Alta)</div>
+    </div>
+    <div style="background:#1e293b;padding:25px;border-radius:8px;border:1px solid #334155;text-align:center;">
+        <div class="contador" style="color:#eab308;" id="contador-media">0</div>
+        <div class="etiqueta-contador">Viabilidad Media</div>
+    </div>
+    <div style="background:#1e293b;padding:25px;border-radius:8px;border:1px solid #334155;text-align:center;">
+        <div class="contador" style="color:#ef4444;" id="contador-baja">0</div>
+        <div class="etiqueta-contador">Descartados (Baja)</div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Carteles Encontrados</h3>
+    <div class="filtro">
+        <input type="text" id="filtro-tabla" placeholder="Filtrar por número de cartel, institución o viabilidad...">
+    </div>
+    <table id="tabla-resultados">
+        <thead>
+            <tr>
+                <th>Número Cartel</th>
+                <th>Institución</th>
+                <th>Presupuesto (CRC)</th>
+                <th>Fecha Límite</th>
+                <th>Viabilidad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="cuerpo-tabla">
+            <!-- Las filas se insertan dinámicamente -->
+        </tbody>
+    </table>
+</div>
+
+<div id="detalle-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;padding:40px;">
+    <div style="background:#1e293b;border-radius:8px;padding:30px;max-width:600px;margin:50px auto;border:1px solid #334155;color:#e2e8f0;">
+        <h3 style="color:#38bdf8;margin-bottom:20px;">Detalle del Cartel</h3>
+        <div id="contenido-detalle"></div>
+        <button onclick="cerrarDetalle()" class="btn btn-secondary" style="margin-top:20px;">Cerrar</button>
+    </div>
+</div>
+
+<script>
+    // Datos de ejemplo (se reemplazan con datos reales del agente de IA)
+    const carteles = [
+        {
+            numero_cartel: '2026XE-0000XX-000100001',
+            institucion_emisora: 'Banco Hipotecario de la Vivienda (BANHVI)',
+            presupuesto_estimado: 50000000,
+            moneda: 'CRC',
+            fecha_limite_presentacion: '2026-12-31T16:00:00',
+            viabilidad_participacion: 'Alta',
+            resumen_alcance: 'Adquisición de Web Application Firewall (WAF) Administrado',
+            requisitos_experiencia: {
+                personal: 'Certificación en seguridad informática',
+                fabricante: 'Partner Premier del fabricante WAF'
+            },
+            justificacion_viabilidad: 'El perfil técnico coincide con las verticales de negocio actuales.'
+        },
+        {
+            numero_cartel: '2026XE-0000XX-000100002',
+            institucion_emisora: 'Ministerio de Educación Pública',
+            presupuesto_estimado: 15000000,
+            moneda: 'CRC',
+            fecha_limite_presentacion: '2026-11-15T12:00:00',
+            viabilidad_participacion: 'Media',
+            resumen_alcance: 'Migración de servidores de respaldo a la nube',
+            requisitos_experiencia: {
+                personal: 'Experiencia en migraciones de infraestructura',
+                fabricante: 'Certificación cloud requerida'
+            },
+            justificacion_viabilidad: 'Presupuesto dentro de rango, pero requiere validación de experiencia en nube.'
+        },
+        {
+            numero_cartel: '2026XE-0000XX-000100003',
+            institucion_emisora: 'Municipalidad de San José',
+            presupuesto_estimado: 8000000,
+            moneda: 'CRC',
+            fecha_limite_presentacion: '2026-10-20T10:00:00',
+            viabilidad_participacion: 'Baja',
+            resumen_alcance: 'Actualización de equipos de cómputo',
+            requisitos_experiencia: {
+                personal: 'Técnico en soporte de cómputo',
+                fabricante: 'Distribuidor autorizado'
+            },
+            justificacion_viabilidad: 'Presupuesto bajo el mínimo requerido para proyectos de esta envergadura.'
+        }
+    ];
+
+    function renderizarTabla(filtro = '') {
+        const tbody = document.getElementById('cuerpo-tabla');
+        tbody.innerHTML = '';
+
+        const filtrados = carteles.filter(c =>
+            c.numero_cartel.toLowerCase().includes(filtro.toLowerCase()) ||
+            c.institucion_emisora.toLowerCase().includes(filtro.toLowerCase()) ||
+            c.viabilidad_participacion.toLowerCase().includes(filtro.toLowerCase())
+        );
+
+        filtrados.forEach((c, index) => {
+            const fila = document.createElement('tr');
+            const claseViabilidad = 'viabilidad-' + c.viabilidad_participacion.toLowerCase();
+            fila.innerHTML = `
+                <td><strong>${c.numero_cartel}</strong></td>
+                <td>${c.institucion_emisora}</td>
+                <td>${c.presupuesto_estimado.toLocaleString()}</td>
+                <td>${new Date(c.fecha_limite_presentacion).toLocaleDateString('es-CR')}</td>
+                <td><span class="${claseViabilidad}">${c.viabilidad_participacion}</span></td>
+                <td><button onclick="abrirDetalle(${index})" class="btn" style="padding:6px 12px;font-size:0.85rem;">Detalle</button></td>
+            `;
+            tbody.appendChild(fila);
+        });
+
+        // Actualizar contadores
+        document.getElementById('contador-total').textContent = carteles.length;
+        document.getElementById('contador-viables').textContent = carteles.filter(c => c.viabilidad_participacion === 'Alta').length;
+        document.getElementById('contador-media').textContent = carteles.filter(c => c.viabilidad_participacion === 'Media').length;
+        document.getElementById('contador-baja').textContent = carteles.filter(c => c.viabilidad_participacion === 'Baja').length;
+    }
+
+    function abrirDetalle(index) {
+        const c = carteles[index];
+        const contenido = `
+            <p><strong>Número:</strong> ${c.numero_cartel}</p>
+            <p><strong>Institución:</strong> ${c.institucion_emisora}</p>
+            <p><strong>Presupuesto:</strong> ${c.presupuesto_estimado.toLocaleString()} ${c.moneda}</p>
+            <p><strong>Fecha límite:</strong> ${new Date(c.fecha_limite_presentacion).toLocaleDateString('es-CR')}</p>
+            <p><strong>Viabilidad:</strong> <span class="viabilidad-${c.viabilidad_participacion.toLowerCase()}">${c.viabilidad_participacion}</span></p>
+            <p><strong>Alcance:</strong> ${c.resumen_alcance}</p>
+            <p><strong>Experiencia personal:</strong> ${c.requisitos_experiencia.personal}</p>
+            <p><strong>Experiencia fabricante:</strong> ${c.requisitos_experiencia.fabricante}</p>
+            <p><strong>Justificación:</strong> ${c.justificacion_viabilidad}</p>
+        `;
+        document.getElementById('contenido-detalle').innerHTML = contenido;
+        document.getElementById('detalle-modal').style.display = 'block';
+    }
+
+    function cerrarDetalle() {
+        document.getElementById('detalle-modal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('detalle-modal')) {
+            cerrarDetalle();
+        }
+    };
+
+    document.getElementById('filtro-tabla').addEventListener('input', function(e) {
+        renderizarTabla(e.target.value);
+    });
+
+    // Inicializar
+    renderizarTabla();
+</script>
+{% endblock %}

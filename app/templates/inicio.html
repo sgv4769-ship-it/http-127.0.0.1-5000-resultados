@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - Analisis de Carteles SICOP{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Bienvenido al Sistema de Analisis de Carteles</h2>
+    <p>Esta aplicacion permite descargar, leer y analizar los Pliegos de Condiciones (TDR/Carteles) del portal SICOP de Costa Rica, evaluando la viabilidad tecnica y comercial de participar en cada concurso publico.</p>
+
+    <div class="alert alert-info">
+        <strong>¿Qué hace esta app?</strong><br>
+        Se conecta periódicamente al portal SICOP para descargar carteles, aplica filtros duros iniciales (presupuesto, plazos, industria TI), clasifica documentos en un repositorio central y ejecuta un agente de IA que emite una recomendación de viabilidad en formato JSON.
+    </div>
+
+    <h3>Acciones rápidas</h3>
+    <div class="grid grid-2" style="margin-top: 20px;">
+        <div style="background:#1e293b;padding:20px;border-radius:8px;border:1px solid #334155;">
+            <h4 style="color:#38bdf8;margin-bottom:10px;">1. Descargar carteles</h4>
+            <p style="color:#cbd5e1;font-size:0.9rem;">Consulta el portal SICOP y descarga los Pliegos de Condiciones disponibles.</p>
+            <a href="#" class="btn" style="margin-top:15px;">Iniciar descarga</a>
+        </div>
+        <div style="background:#1e293b;padding:20px;border-radius:8px;border:1px solid #334155;">
+            <h4 style="color:#38bdf8;margin-bottom:10px;">2. Ver resultados</h4>
+            <p style="color:#cbd5e1;font-size:0.9rem;">Revisa el tablero con contadores y la tabla de carteles analizados.</p>
+            <a href="/resultados" class="btn btn-secondary" style="margin-top:15px;">Ir a resultados</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
