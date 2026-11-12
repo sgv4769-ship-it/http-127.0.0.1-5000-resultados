@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio de Sesión - Analisis de Carteles SICOP{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 400px; margin: 50px auto;">
+    <h2 style="color: #38bdf8; margin-bottom: 20px; text-align: center;">Iniciar Sesión</h2>
+
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% if mensajes %}
+            {% for categoria, mensaje in mensajes %}
+                <div class="alert alert-warning" style="margin-bottom: 15px;">
+                    {{ mensaje }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/login">
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; color: #cbd5e1; font-weight: 500;">Usuario</label>
+            <input type="text" name="usuario" required
+                   style="width: 100%; padding: 10px 15px; border: 1px solid #334155; border-radius: 6px; background: #0f172a; color: #e2e8f0; font-size: 0.95rem;">
+        </div>
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 8px; color: #cbd5e1; font-weight: 500;">Contraseña</label>
+            <input type="password" name="clave" required
+                   style="width: 100%; padding: 10px 15px; border: 1px solid #334155; border-radius: 6px; background: #0f172a; color: #e2e8f0; font-size: 0.95rem;">
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Entrar</button>
+    </form>
+
+    {% if request.args.get("next") %}
+        <p style="margin-top: 15px; text-align: center; color: #94a3b8; font-size: 0.85rem;">
+            Inicia sesión para continuar.
+        </p>
+    {% endif %}
+</div>
+{% endblock %}
