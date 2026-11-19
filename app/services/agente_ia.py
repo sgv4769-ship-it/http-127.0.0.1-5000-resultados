@@ -2,9 +2,34 @@
 
 Lee la llave de API desde .env, llama al agente y devuelve el contrato JSON
 estructurado con los campos definidos en AGENTS.md.
+Incluye sanitizado de entrada para bloquear intentos de prompt injection.
 """
 
 import os
+import re
+
+
+PATRONES_PROMPT_INJECTION = [
+    r"ignorar\s+todas\s+las\s+instrucciones",
+    r"olvida\s+tu\s+rol",
+    r"eres\s+ahora\s+un\s+asistente",
+    r"system\s*:",
+    r"instrucciones\s+del\s+sistema",
+    r"imprime\s+todas\s+las\s+credenciales",
+    r"revela\s+contraseñas?",
+    r"revela\s+claves?",
+    r"bypass\s+de\s+seguridad",
+    r"salta\s+las\s+reglas",
+]
+
+
+def _contiene_prompt_injection(texto: str) -> bool:
+    """Detecta patrones de prompt injection en el texto de entrada."""
+    texto_lower = texto.lower()
+    for patron in PATRONES_PROMPT_INJECTION:
+        if re.search(patron, texto_lower):
+            return True
+    return False
 
 
 def _cargar_env(ruta_env=".env"):
@@ -30,7 +55,16 @@ def analizar_con_agente_ia(texto_cartel: str, numero_cartel: str = "N/A") -> dic
 
     Lee la llave de API de IA_API_KEY en .env. Si no está configurada,
     retorna un error controlado sin hardcodear claves.
+    Si detecta intento de prompt injection, rechaza la petición.
     """
+    # Seguridad: bloquear prompt injection antes de procesar
+    if _contiene_prompt_injection(texto_cartel):
+        return {
+            "error": "Entrada rechazada: contenido no permitido (posible prompt injection).",
+            "numero_cartel": numero_cartel,
+            "estado": "prompt_injection_bloqueado",
+        }
+
     api_key = os.getenv("IA_API_KEY")
 
     if not api_key or api_key == "tu_llave_de_api_aqui":
